@@ -11,7 +11,7 @@ import UIKit
 class PageVC: UIPageViewController {
     
     var currentPage = 0
-    var locationsArray = ["Local City Weather",
+    var locationsArray = ["Local City",
                           "Sydney, Australia",
                           "Accra, Ghana",
                           "Uglich, Russia"]

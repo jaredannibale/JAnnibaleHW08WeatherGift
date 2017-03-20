@@ -11,6 +11,9 @@ import UIKit
 class ListVC: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var editBarButton: UIBarButtonItem!
+    @IBOutlet weak var addBarButton: UIBarButtonItem!
+    
     var locationsArray = [String]()
     var currentPage = 0
     
@@ -36,6 +39,17 @@ class ListVC: UIViewController {
         }
     }
     
+    @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
+        if tableView.isEditing == true {
+            tableView.setEditing(false, animated: true)
+            editBarButton.title = "Edit"
+            addBarButton.isEnabled = true
+        } else {
+            tableView.setEditing(true, animated: true)
+            editBarButton.title = "Done"
+            addBarButton.isEnabled = false
+        }
+    }
 
 }
 
@@ -55,4 +69,26 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // We don't need any code here (cell triggers segue -> Don't need this in this instance)
     }
+    
+//    MARK:- Table View Editing Functions
+   
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            locationsArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .top) // might want to change to .fade
+        }
+       
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 }
