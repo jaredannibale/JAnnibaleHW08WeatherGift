@@ -70,7 +70,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         // We don't need any code here (cell triggers segue -> Don't need this in this instance)
     }
     
-//    MARK:- Table View Editing Functions
+//    MARK:- TableView Editing Functions
    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -81,14 +81,24 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        
+        let itemToMove = locationsArray[sourceIndexPath.row]
+        locationsArray.remove(at: sourceIndexPath.row)
+        locationsArray.insert(itemToMove, at: destinationIndexPath.row)
     }
     
+//    MARK:- TableVIew Code to Freeze the First Cell (No Deleting or Moving)
     
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return (indexPath.row == 0 ? false : true )
+    }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return (indexPath.row == 0 ? false : true )
+    }
     
-    
-    
-    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        return (proposedDestinationIndexPath.row == 0 ? sourceIndexPath : proposedDestinationIndexPath )
+        
+    }
     
 }
