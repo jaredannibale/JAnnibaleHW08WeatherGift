@@ -25,20 +25,40 @@ class DetailVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationManager.delegate = self
+        
         if currentPage == 0 {
             getLocation()
         }
+        
+        locationManager.delegate = self
+        locationsArray[currentPage].getWeather {
+            self.updateUserInterface()
+        }
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        if currentPage == 0 {
+            getLocation()
+        }
+    }
+
+    
+    func updateUserInterface() {
+        
+        let isHidden = (locationsArray[currentPage].currentTemp == -999.99)
+        
+        temperatureLabel.isHidden = isHidden
+        locationLabel.isHidden = isHidden
+        
         locationLabel.text = locationsArray[currentPage].name
         dateLabel.text = locationsArray[currentPage].coordinates
         
-        updateUserInterfact()
-       
-    }
-    
-    func updateUserInterfact() {
-        locationLabel.text = locationsArray[currentPage].name
-        dateLabel.text = locationsArray[currentPage].coordinates
+        let curTemperature = String(format: "%3.f", locationsArray[currentPage].currentTemp) + "°"
+        temperatureLabel.text = curTemperature
+        
+        summaryLabel.text = locationsArray[currentPage].dailySummary
     }
     
 }
@@ -47,6 +67,7 @@ extension DetailVC: CLLocationManagerDelegate{
     
     func getLocation() {
         let status = CLLocationManager.authorizationStatus()
+        
         handleLocationAuthorizationStatus(status: status)
     }
     
@@ -72,7 +93,9 @@ extension DetailVC: CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if currentPage == 0 {
+            
             let geoCoder = CLGeocoder()
+           
             currentLocation = locations.last
             
             let currentLat = "\(currentLocation.coordinate.latitude)"
@@ -82,6 +105,7 @@ extension DetailVC: CLLocationManagerDelegate{
             
             
             var place = ""
+            
             geoCoder.reverseGeocodeLocation(currentLocation, completionHandler: {placemarks, error in
                 if placemarks != nil {
                     let placemark = placemarks!.last
@@ -93,8 +117,9 @@ extension DetailVC: CLLocationManagerDelegate{
                 print(place)
                 self.locationsArray[0].name = place
                 self.locationsArray[0].coordinates = currentLat + "," + currentLong
-                self.locationsArray[0].getWeather()
-                self.updateUserInterfact()
+                self.locationsArray[0].getWeather {
+                    self.updateUserInterface()
+                }
             })
         }
         
