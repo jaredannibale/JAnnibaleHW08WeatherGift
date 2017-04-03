@@ -53,12 +53,23 @@ class DetailVC: UIViewController {
         locationLabel.isHidden = isHidden
         
         locationLabel.text = locationsArray[currentPage].name
-        dateLabel.text = locationsArray[currentPage].coordinates
+        dateLabel.text = formatTimeForTimeZone(unixDateToFormat: locationsArray[currentPage].currentTime, timeZoneString: locationsArray[currentPage].timeZone)
         
         let curTemperature = String(format: "%3.f", locationsArray[currentPage].currentTemp) + "°"
         temperatureLabel.text = curTemperature
         
         summaryLabel.text = locationsArray[currentPage].dailySummary
+        
+        currentImage.image = UIImage(named: locationsArray[currentPage].currentIcon)
+    }
+    
+    func formatTimeForTimeZone(unixDateToFormat: TimeInterval, timeZoneString: String) -> String {
+        let usableDate = Date(timeIntervalSince1970: unixDateToFormat)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE, MMM. dd, y"
+        dateFormatter.timeZone = TimeZone(identifier: timeZoneString)
+        let dateString = dateFormatter.string(from: usableDate)
+        return dateString
     }
     
 }
@@ -111,7 +122,7 @@ extension DetailVC: CLLocationManagerDelegate{
                     let placemark = placemarks!.last
                     place = (placemark?.name!)!
                 } else {
-                    print("Error retrieving place. Error code: \(error)")
+                    print("Error retrieving place. Error code: \(error!)")
                     place = "Parts Unknown."
                 }
                 print(place)
