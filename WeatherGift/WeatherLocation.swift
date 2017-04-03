@@ -69,12 +69,15 @@ class WeatherLocation {
                 }
                 
                 let dailyDataArray = json["daily"]["data"]
-                for day in 0...dailyDataArray.count-1 {
+                self.dailyForecastArray = []
+                let lastDay = min(dailyDataArray.count-1, 6)
+                for day in 1...lastDay {
                     let maxTemp = json["daily"]["data"][day]["temperatureMax"].doubleValue
                     let minTemp = json["daily"]["data"][day]["temperatureMin"].doubleValue
                     let dailySummary = json["daily"]["data"][day]["summary"].stringValue
                     let dateValue = json["daily"]["data"][day]["time"].doubleValue
                     let icon = json["daily"]["data"][day]["icon"].stringValue
+                    let iconName = icon.replacingOccurrences(of: "night", with: "day")
                     self.dailyForecastArray.append(DailyForecast(dailyMaxTemp: maxTemp, dailyMinTemp: minTemp, dailySummary: dailySummary, dailyDate: dateValue, dailyIcon: icon))
                     print("DailyForecastArray = ***** \(self.dailyForecastArray)")
                 }
